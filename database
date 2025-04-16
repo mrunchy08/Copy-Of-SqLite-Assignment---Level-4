@@ -11,6 +11,29 @@ SELECT * FROM beans
 WHERE name = ? AND rating = (SELECT MAX(rating) FROM beans WHERE name = ?)
 LIMIT 1;"""
 
+CREATE_CREDITS_TABLE = """
+CREATE TABLE IF NOT EXISTS credits (
+    id INTEGER PRIMARY KEY,
+    operator TEXT,
+    item TEXT,
+    amount INTEGER
+);
+"""
+
+INSERT_TRANSACTION = "INSERT INTO credits (operator, item, amount) VALUES (?, ?, ?);"
+
+GET_ALL_TRANSACTIONS = "SELECT * FROM credits;"
+GET_TRANSACTIONS_BY_OPERATOR = "SELECT * FROM credits WHERE operator = ?;"
+GET_HIGHEST_SPENDER = """
+SELECT * FROM credits
+WHERE operator = ? AND amount = (SELECT MAX(amount) FROM credits WHERE operator = ?)
+LIMIT 1;
+"""
+GET_TOTAL_CREDITS = "SELECT SUM(amount) FROM credits;"
+
+DELETE_TRANSACTION_BY_NAME = "DELETE FROM credits WHERE operator = ?;"
+DELETE_TRANSACTION_BY_ID = "DELETE FROM credits WHERE id = ?;"
+
 
 def connect():
     return sqlite3.connect("data.db")
@@ -19,6 +42,7 @@ def connect():
 def create_tables(connection):
     with connection: 
         connection.execute(CREATE_BEANS_TABLE)
+        connection.execute(CREATE_CREDITS_TABLE)
 
 def add_bean(connection, name, method, rating):
     with connection:
@@ -35,3 +59,35 @@ def get_beans_by_name(connection, name):
 def get_best_preparation_for_bean(connection, name):
     return connection.execute(GET_BEST_PREPARATION_FOR_BEAN, (name, name)).fetchone()
 
+def add_transaction(connection, operator, item, amount):
+    with connection:
+        connection.execute(INSERT_TRANSACTION, (operator, item, amount))
+
+
+def get_all_transactions(connection):
+    with connection:
+        return connection.execute(GET_ALL_TRANSACTIONS).fetchall()
+
+
+def get_transactions_by_operator(connection, operator):
+    with connection:
+        return connection.execute(GET_TRANSACTIONS_BY_OPERATOR, (operator,)).fetchall()
+
+
+def get_highest_spender(connection, operator):
+    return connection.execute(GET_HIGHEST_SPENDER, (operator, operator)).fetchone()
+
+
+def get_total_credits(connection):
+    with connection:
+        return connection.execute(GET_TOTAL_CREDITS).fetchone()
+
+
+def delete_transaction_by_name(connection, operator):
+    with connection:
+        connection.execute(DELETE_TRANSACTION_BY_NAME, (operator,))
+
+
+def delete_transaction_by_id(connection, transaction_id):
+    with connection:
+        connection.execute(DELETE_TRANSACTION_BY_ID, (transaction_id,))
