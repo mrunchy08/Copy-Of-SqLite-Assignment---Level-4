@@ -10,6 +10,18 @@ SELECT * FROM siege
 WHERE name = ? AND rating = (SELECT MAX(rating) FROM siege WHERE name = ?)
 LIMIT 1;"""
 
+CREATE_OPERATORS_TABLE = "CREATE TABLE IF NOT EXISTS operators (id INTEGER PRIMARY KEY, name TEXT, method TEXT, rating INTEGER);"
+
+INSERT_OPERATOR = "INSERT INTO operators (name, method, rating) VALUES (?, ?, ?);"
+
+GET_ALL_OPERATORS = "SELECT * FROM operators;"
+GET_OPERATOR_BY_NAME = "SELECT * FROM operators WHERE name = ?;"
+GET_BEST_PREPARATION_FOR_OPERATOR = """
+SELECT * FROM operators
+WHERE name = ? AND rating = (SELECT MAX(rating) FROM operators WHERE name = ?)
+LIMIT 1;
+"""
+
 CREATE_CREDITS_TABLE = """
 CREATE TABLE IF NOT EXISTS credits (
     id INTEGER PRIMARY KEY,
@@ -42,6 +54,7 @@ def create_tables(connection):
     with connection: 
         connection.execute(CREATE_SIEGE_TABLE)
         connection.execute(CREATE_CREDITS_TABLE)
+        connection.execute(CREATE_OPERATORS_TABLE)
 
 def add_bean(connection, name, method, rating):
     with connection:
