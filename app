@@ -9,7 +9,7 @@ Please select one of the following options:
 3. Find a transaction by operator name.
 4. See the operator with the highest credit spend.
 5. See total credits spent.
-6. Delete a transaction by name or ID.
+6. Delete a transaction by name
 7. EXIT.
 
 Your selection: 
