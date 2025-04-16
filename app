@@ -9,7 +9,7 @@ Please select one of the following options:
 3. Find a transaction by operator name.
 4. See the operator with the highest credit spend.
 5. See total credits spent.
-6. Delete a transaction by name
+6. Delete a transaction by name or ID.
 7. EXIT.
 
 Your selection: 
@@ -76,7 +76,7 @@ def total_credits_spent(connection):
 
 def find_transaction_by_operator(connection):
     operator = input("Enter the operator's name: ")
-    transactions = database.get_transactions_by_operator(connection)
+    transactions = database.get_transactions_by_operator(connection, operator)  # Pass operator here
 
     for transaction in transactions:
         print(f"Operator: {transaction[1]}, Item: {transaction[2]}, Amount: {transaction[3]} credits")
@@ -90,7 +90,13 @@ def view_all_transactions(connection):
 def add_credit_transaction(connection):
     operator = input("Enter the operator's name: ")
     item = input("Enter the item purchased (e.g., skin, charm, pack): ")
-    amount = int(input("Enter the amount of credits spent: "))
+    
+    while True:
+        try:
+            amount = int(input("Enter the amount of credits spent: "))
+            break
+        except ValueError:
+            print("Invalid input. Please enter a numeric value for the amount.")
 
     database.add_transaction(connection, operator, item, amount)
 
