@@ -76,7 +76,7 @@ def total_credits_spent(connection):
 
 def find_transaction_by_operator(connection):
     operator = input("Enter the operator's name: ")
-    transactions = database.get_transactions_by_operator(connection, operator)  # Pass operator here
+    transactions = database.get_transactions_by_operator(connection, operator)  
 
     for transaction in transactions:
         print(f"Operator: {transaction[1]}, Item: {transaction[2]}, Amount: {transaction[3]} credits")
